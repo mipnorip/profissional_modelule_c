@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  proxy:
+    image: nginx
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+
+  app:
+    restart: always
+    build:
+      dockerfile: dockerfile
+    env_file:
+      - .env.app.example
+    depends_on:
+      - db
+  
+  db:
+    image: mysql:8.0
+    env_file:
+      - .env.db.example
+    volumes:
+      - db_base:/var/lib/mysql
+
+volumes:
+  app_base:
+  db_base:
+
+networks:
+  frontend:
+  backend:
